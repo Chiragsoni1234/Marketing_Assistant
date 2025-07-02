@@ -130,12 +130,16 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
+import os
+
+API_KEY = os.environ.get("OPENROUTER_API_KEY")
+API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 @csrf_exempt
 def marketing_api(request):
     if request.method == "POST":
         try:
-            # Check Content-Type header
+            # Support both JSON and form data
             if request.content_type == 'application/json':
                 body = json.loads(request.body)
                 prompt = body.get("prompt")
@@ -145,7 +149,7 @@ def marketing_api(request):
             if not prompt:
                 return JsonResponse({"error": "No prompt provided."}, status=400)
 
-            # Classification and response
+            # Determine response type
             if is_marketing_related(prompt):
                 answer = generate_marketing_response(prompt)
                 return JsonResponse({"response": answer, "type": "marketing"})
@@ -159,14 +163,10 @@ def marketing_api(request):
     return JsonResponse({"error": "Only POST method is allowed."}, status=405)
 
 
-
-API_KEY = "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"
-API_URL = "https://openrouter.ai/api/v1/chat/completions"
-
-# Helper: Check if prompt is marketing-related
+# --- Classify prompt ---
 def is_marketing_related(prompt):
     headers = {
-        "Authorization": f"Bearer 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",
+        "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
     }
     data = {
@@ -193,7 +193,8 @@ def is_marketing_related(prompt):
         print("Classification error:", e)
     return False
 
-# Generate marketing response
+
+# --- Generate marketing response ---
 def generate_marketing_response(prompt):
     headers = {
         "Authorization": f"Bearer {API_KEY}",
@@ -211,12 +212,15 @@ def generate_marketing_response(prompt):
     response = requests.post(API_URL, headers=headers, json=data)
     if response.status_code == 200:
         return "✅ Yes, this is a marketing-related question!\n\n" + response.json()["choices"][0]["message"]["content"]
-    return "❌ Error generating marketing answer."
+    else:
+        print("❌ Marketing response error:", response.status_code, response.text)
+        return "❌ Error generating marketing answer."
 
-# Generate stylish quote if not marketing
+
+# --- Generate quote if not marketing ---
 def generate_stylish_quote(prompt):
     headers = {
-        "Authorization": f"Bearer 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",
+        "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
     }
     data = {
@@ -231,9 +235,12 @@ def generate_stylish_quote(prompt):
     response = requests.post(API_URL, headers=headers, json=data)
     if response.status_code == 200:
         return "💡 This isn't a marketing question, but here's a quote for you:\n\n" + response.json()["choices"][0]["message"]["content"]
-    return "❌ Error generating quote."
+    else:
+        print("❌ Quote generation error:", response.status_code, response.text)
+        return "❌ Error generating quote."
 
-# Django view
+
+# --- Default HTML form-based view ---
 def index(request):
     response_text = None
     if request.method == "POST":
@@ -244,6 +251,5 @@ def index(request):
                 response_text = generate_marketing_response(prompt)
             else:
                 response_text = generate_stylish_quote(prompt)
-
 
     return render(request, "index.html", {"response_text": response_text})
