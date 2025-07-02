@@ -1,0 +1,90 @@
+<!-- assistant/templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Assistant</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f4f6;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: #ffffff;
+      margin-top: 50px;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      resize: vertical;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #4f46e5;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #4338ca;
+    }
+
+    .response {
+      margin-top: 25px;
+      padding: 15px;
+      background-color: #f9fafb;
+      border-left: 4px solid #4f46e5;
+      border-radius: 8px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Ask AI Assistant</h1>
+    <form method="post">
+      {% csrf_token %}
+      <textarea name="prompt" placeholder="Type your question...">{{ request.POST.prompt }}</textarea>
+      <div style="text-align:center;">
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+
+    {% if response_text %}
+      <div class="response">
+        <strong>AI Response:</strong><br>
+        {{ response_text }}
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
