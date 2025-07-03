@@ -1,129 +1,3 @@
-# from django.shortcuts import render
-# import requests
-
-# # Helper function to classify if the question is marketing-related
-# def is_marketing_related(prompt):
-#     headers = {
-#         "Authorization": "Bearer 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",
-#         "Content-Type": "application/json"
-#     }
-
-#     data = {
-#         "model": "perplexity/sonar-reasoning-pro",
-#         "messages": [
-#             {
-#                 "role": "system",
-#                 "content": (
-#                     "You are a strict classifier. Only respond with one word: YES or NO. "
-#                     "If the input is about marketing, advertising, digital marketing, SEO, branding, customer acquisition, "
-#                     "or promotion, respond with YES. Otherwise respond with NO."
-#                 )
-#             },
-#             {
-#                 "role": "user",
-#                 "content": f"Is this marketing related? '{prompt}'"
-#             }
-#         ],
-#         "temperature": 0  # Low temperature ensures predictable answers
-#     }
-
-#     try:
-#         response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
-#         if response.status_code == 200:
-#             result = response.json()
-#             answer = result['choices'][0]['message']['content'].strip().lower()
-#             return answer == "yes"
-#         return False
-#     except Exception as e:
-#         print("Error in classification:", e)
-#         return False
-
-
-# # Main view for the chat assistant
-# # def index(request):
-# #     response_text = None
-# #     if request.method == "POST":
-# #         prompt = request.POST.get('prompt')
-
-# #         if is_marketing_related(prompt):
-# #             headers = {
-# #                 "Authorization": "Bearer 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",
-# #                 "Content-Type": "application/json"
-# #             }
-
-# #             data = {
-# #                 "model": "perplexity/sonar-reasoning-pro",
-# #                 "messages": [
-# #                     {
-# #                         "role": "system",
-# #                         "content": "You are a helpful and expert marketing assistant. Answer only in the context of marketing."
-# #                     },
-# #                     {
-# #                         "role": "user",
-# #                         "content": prompt
-# #                     }
-# #                 ],
-# #                 "temperature": 0.7
-# #             }
-
-# #             try:
-# #                 response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
-# #                 if response.status_code == 200:
-# #                     result = response.json()
-# #                     ai_answer = result["choices"][0]["message"]["content"]
-# #                     response_text = (
-# #                         "✅ Yes, this is a great marketing-related question!\n\n" + ai_answer
-# #                     )
-# #                 else:
-# #                     response_text = f"❌ Error {response.status_code}: {response.text}"
-# #             except Exception as e:
-# #                 response_text = f"⚠️ Exception occurred: {str(e)}"
-# #         else:
-# #             response_text = "❌ This question is not related to marketing."
-
-# #     return render(request, "index.html", {"response_text": response_text})
-
-
-# def index(request):
-#     response_text = None
-#     if request.method == "POST":
-#         prompt = request.POST.get('prompt')
-
-#         if is_marketing_related(prompt):
-#             headers = {
-#                 "Authorization": "Bearer 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",
-#                 "Content-Type": "application/json"
-#             }
-
-#             data = {
-#                 "model": "perplexity/sonar-reasoning-pro",
-#                 "messages": [
-#                     {
-#                         "role": "system",
-#                         "content": "You are a helpful and expert marketing assistant. Answer only in the context of marketing."
-#                     },
-#                     {
-#                         "role": "user",
-#                         "content": prompt
-#                     }
-#                 ],
-#                 "temperature": 0.7
-#             }
-
-#             try:
-#                 response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
-#                 if response.status_code == 200:
-#                     result = response.json()
-#                     response_text = result["choices"][0]["message"]["content"]
-#                 else:
-#                     response_text = ""  # No response if error
-#             except Exception as e:
-#                 response_text = ""
-#         else:
-#             response_text = "This assistant only handles marketing queries"  # Don't return anything if not marketing related
-
-#     return render(request, "index.html", {"response_text": response_text})
-
 
 import requests
 from django.shortcuts import render
@@ -132,7 +6,8 @@ from django.http import JsonResponse
 import json
 import os
 
-API_KEY = os.environ.get("OPENROUTER_API_KEY")
+# API_KEY = os.environ.get("OPENROUTER_API_KEY")
+API_KEY = "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"
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 @csrf_exempt
@@ -169,12 +44,89 @@ def is_marketing_related(prompt):
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
     }
+
     data = {
         "model": "perplexity/sonar-reasoning-pro",
         "messages": [
             {
                 "role": "system",
-                "content": "Respond only with YES or NO. If the input is about marketing, advertising, SEO, digital marketing, branding, or promotion, respond with YES. Otherwise respond with NO."
+                "content": (
+                    "Respond only with YES or NO. "
+                    "If the input is about any of the following topics, respond with YES:\n"
+                    "- marketing\n"
+                    "- digital marketing\n"
+                    "- online marketing\n"
+                    "- advertising\n"
+                    "- paid ads\n"
+                    "- Google Ads\n"
+                    "- Facebook Ads\n"
+                    "- Instagram Ads\n"
+                    "- influencer marketing\n"
+                    "- content marketing\n"
+                    "- email marketing\n"
+                    "- marketing campaigns\n"
+                    "- product promotions\n"
+                    "- SEO (search engine optimization)\n"
+                    "- SEM (search engine marketing)\n"
+                    "- keyword research\n"
+                    "- backlinks\n"
+                    "- social media marketing\n"
+                    "- social media growth\n"
+                    "- brand awareness\n"
+                    "- brand management\n"
+                    "- branding\n"
+                    "- storytelling for marketing\n"
+                    "- marketing strategy\n"
+                    "- campaign optimization\n"
+                    "- conversion rate\n"
+                    "- conversion rate optimization (CRO)\n"
+                    "- lead generation\n"
+                    "- lead nurturing\n"
+                    "- customer journey\n"
+                    "- sales funnel\n"
+                    "- funnel optimization\n"
+                    "- CRM (customer relationship management)\n"
+                    "- growth marketing\n"
+                    "- growth hacking\n"
+                    "- user acquisition\n"
+                    "- customer acquisition cost (CAC)\n"
+                    "- customer retention\n"
+                    "- customer engagement\n"
+                    "- remarketing\n"
+                    "- retargeting\n"
+                    "- email automation\n"
+                    "- marketing automation\n"
+                    "- PPC (pay per click)\n"
+                    "- affiliate marketing\n"
+                    "- referral marketing\n"
+                    "- mobile marketing\n"
+                    "- SMS marketing\n"
+                    "- product launch strategy\n"
+                    "- marketing metrics\n"
+                    "- marketing KPIs\n"
+                    "- marketing budget\n"
+                    "- B2B marketing\n"
+                    "- B2C marketing\n"
+                    "- ecommerce marketing\n"
+                    "- PR (public relations)\n"
+                    "- online reputation\n"
+                    "- performance marketing\n"
+                    "- brand equity\n"
+                    "- brand positioning\n"
+                    "- value proposition\n"
+                    "- competitive analysis\n"
+                    "- influencer partnerships\n"
+                    "- video marketing\n"
+                    "- viral marketing\n"
+                    "- website traffic growth\n"
+                    "- analytics and metrics\n"
+                    "- audience segmentation\n"
+                    "- product-market fit\n"
+                    "- go-to-market strategy\n"
+                    "- omni-channel marketing\n"
+                    "- landing page optimization\n"
+                    "If the input is not related to any of these, respond with NO. Do not explain."
+                )
             },
             {
                 "role": "user",
@@ -191,6 +143,7 @@ def is_marketing_related(prompt):
             return answer == "yes"
     except Exception as e:
         print("Classification error:", e)
+
     return False
 
 
