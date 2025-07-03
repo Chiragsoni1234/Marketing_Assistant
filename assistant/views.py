@@ -6,8 +6,7 @@ from django.http import JsonResponse
 import json
 import os
 
-# API_KEY = os.environ.get("OPENROUTER_API_KEY")
-API_KEY = "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"
+API_KEY = os.environ.get("OPENROUTER_API_KEY")
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 @csrf_exempt
