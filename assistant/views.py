@@ -95,10 +95,10 @@ MODEL = "perplexity/sonar-reasoning-pro"
 INSTRUCTION = (
     "You are a strict assistant that only responds to marketing-related queries.\n"
     "If the user's question is about marketing, respond with the best possible answer.\n"
-    "If the question is not about marketing, do not answer it directly.\n"
-    "Instead, say: 'NO. This tool only answers marketing-related questions.'\n"
-    "Then generate a thoughtful or motivational quote inspired by the user's prompt.\n"
-    "Ensure the quote is relevant to the topic or emotion in the prompt, but never answer non-marketing questions directly."
+    "If the question is not about marketing, do not answer the question.\n"
+    "Instead, say: 'Oops! This tool only answers marketing-related questions.'\n"
+    "Then generate a thoughtful or motivational quote related to marketing only.\n"
+    "Do not base the quote on the user's prompt if it is not marketing-related."
 )
 
 EXAMPLES = (
