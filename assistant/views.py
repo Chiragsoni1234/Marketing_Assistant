@@ -138,10 +138,10 @@ def index(request):
                 if res.status_code == 200:
                     response_text = res.json()["choices"][0]["message"]["content"].strip()
                 else:
-                    response_text = "❌ API returned error."
+                    response_text = "❌ Something went wrong please try again"
                     print("API error:", res.status_code, res.text)
             except Exception as e:
-                response_text = "❌ Something went wrong."
+                response_text = "❌ Something went wrong please try again"
                 print("Request exception:", str(e))
         else:
             response_text = "❗ Please enter a prompt."
@@ -183,7 +183,7 @@ def marketing_api(request):
                 return JsonResponse({"response": result}, status=200)
             else:
                 print("API Error:", res.status_code, res.text)
-                return JsonResponse({"error": "API Error"}, status=500)
+                return JsonResponse({"error": "❌ Something went wrong please try again"}, status=500)
 
         except Exception as e:
             print("Exception:", str(e))
